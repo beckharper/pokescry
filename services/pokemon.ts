@@ -20,17 +20,18 @@ export interface PokemonListResponse {
   previous: string | null;
   results: Pokemon[];
 }
-//starting with pokemon
-export async function fetchPokemon(): Promise<Pokemon[]> {
-  const response = await fetch(`${POKEAPI_BASE_URL}/type`, {
-    //forcing local cache here because pokeapi requires it, will change to redis cache later
-    cache: "force-cache",
+//starting with 20 pokemon, making sure api working
+export async function fetchPokemon(): Promise<PokemonListResponse> {
+  const response = await fetch(`${POKEAPI_BASE_URL}/pokemon?limit=20`, {
+    //temporary
+    cache: "no-store",
   });
 
   if (!response.ok) {
-    throw new Error(`pokemon not found: ${response.statusText}`);
+    throw new Error(`no pokemon found: ${response.statusText}`);
   }
+  //putting res into variable for lateer use, potentially for caching or other purposes
   const data = await response.json();
 
-  return data.results.filter((type: Pokemon) => type.name !== "unknown");
+  return data.results;
 }
