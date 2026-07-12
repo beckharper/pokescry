@@ -1,5 +1,5 @@
-import { fetchPokemonList, Pokemon } from "@/services/pokemon";
 import Link from "next/link";
+import { caller } from "@/server/caller";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -10,9 +10,9 @@ interface HomeProps {
 export default async function Home({ searchParams }: HomeProps) {
   const params = await searchParams;
   const page = parseInt(params.page as string) || 1;
-  const offset = (page - 1) * 20;
-  const pokemon = await fetchPokemonList(offset, ITEMS_PER_PAGE);
-  console.log("pokemon", pokemon);
+  const api = await caller();
+  const offset = (page - 1) * ITEMS_PER_PAGE;
+  const pokemon = await api.pokemon.list({ offset, limit: ITEMS_PER_PAGE });
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
