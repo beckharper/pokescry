@@ -6,4 +6,4 @@ export const appRouter = router({
 });
 
 export type AppRouter = typeof appRouter;
-//only exporting type so we dont get serverside code in client
+//i learned/realized we only want to export type here so we dont get serverside code in client

@@ -1,30 +1,17 @@
 import { redis } from "@/lib/redis";
 
-const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
+const POKEAPI_URL = "https://pokeapi.co/api/v2";
 
-//adding types for the pokeapi response
 export interface Pokemon {
   id: number;
   name: string;
   url: string;
   height: number;
   weight: number;
-  sprites: PokemonSprites;
-  types: PokemonTypeSlot[];
-}
-
-export interface PokemonSprites {
-  front_default: string | null;
-}
-
-export interface PokemonTypeSlot {
-  slot: number;
-  type: PokemonType;
-}
-
-export interface PokemonType {
-  name: string;
-  url: string;
+  sprites: {
+    front_default: string | null;
+  };
+  types: string[];
 }
 
 export interface PokemonListResponse {
@@ -41,7 +28,6 @@ export async function fetchPokemonList(
   const cacheKey = `pokemon-list-${offset}-${limit}`;
 
   const cached = await redis.get<PokemonListResponse>(cacheKey);
-
   if (cached) {
     console.log("cache hit!:", cacheKey);
     return cached;
@@ -50,7 +36,7 @@ export async function fetchPokemonList(
   console.log("cache miss!:", cacheKey);
 
   const response = await fetch(
-    `${POKEAPI_BASE_URL}/pokemon?offset=${offset}&limit=${limit}`,
+    `${POKEAPI_URL}/pokemon?offset=${offset}&limit=${limit}`,
   );
 
   if (!response.ok) {
@@ -59,8 +45,7 @@ export async function fetchPokemonList(
 
   const data: PokemonListResponse = await response.json();
 
-  await redis.set(cacheKey, data, { ex: 60 * 60 }); // cache for 1 hour
-
+  await redis.set(cacheKey, data, { ex: 60 * 60 });
   return data;
 }
 
@@ -76,7 +61,7 @@ export async function fetchPokemon(name: string): Promise<Pokemon> {
 
   console.log("cache miss!:", cacheKey);
 
-  const response = await fetch(`${POKEAPI_BASE_URL}/pokemon/${normalizedName}`);
+  const response = await fetch(`${POKEAPI_URL}/pokemon/${normalizedName}`);
 
   if (!response.ok) {
     throw new Error("failed to fetch pokemon");
@@ -85,7 +70,7 @@ export async function fetchPokemon(name: string): Promise<Pokemon> {
   const data: Pokemon = await response.json();
 
   await redis.set(cacheKey, data, { ex: 60 * 60 * 24 });
-  //cache for 24 hours; longer ttl because individual pokemon rarely change but a set of more/all pokemon change more frequently
+  //longer ttl because individual pokemon rarely change once released but a set of more/all pokemon change more frequently, ar at least i would think
 
   return data;
 }

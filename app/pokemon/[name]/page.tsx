@@ -23,7 +23,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
       />
       <p>Height: {pokemon.height}</p>
       <p> Weight: {pokemon.weight}</p>
-      <p>Types: {pokemon.types.map((t) => t.type.name).join(", ")}</p>
+      <p>Types: placeholder text</p>
     </main>
   );
 }
