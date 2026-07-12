@@ -19,7 +19,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <h1 className="text-4xl font-bold mt-25 mb-6 flex flex-col">PokeScry</h1>
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="grid grid-cols-4 gap-4">
-          {pokemon.results.map((p: Pokemon) => (
+          {pokemon.results.map((p: { name: string }) => (
             <Link
               key={p.name}
               href={`/pokemon/${p.name}`}
