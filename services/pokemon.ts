@@ -21,17 +21,23 @@ export interface PokemonListResponse {
   results: Pokemon[];
 }
 //starting with 20 pokemon, making sure api working
-export async function fetchPokemon(): Promise<PokemonListResponse> {
-  const response = await fetch(`${POKEAPI_BASE_URL}/pokemon?limit=20`, {
-    //temporary
-    cache: "no-store",
-  });
+export async function fetchPokemonList(
+  offset: number = 0,
+  limit: number = 20,
+): Promise<PokemonListResponse> {
+  const response = await fetch(
+    `${POKEAPI_BASE_URL}/pokemon?offset=${offset}&limit={limit}`,
+    {
+      cache: "no-store",
+      //temporary
+    },
+  );
 
   if (!response.ok) {
-    throw new Error(`no pokemon found: ${response.statusText}`);
+    throw new Error(`failed to fetch pokemon list: ${response.status}`);
   }
-  //putting res into variable for lateer use, potentially for caching or other purposes
-  const data = await response.json();
 
-  return data.results;
+  const data = await response.json();
+  console.log("data", data);
+  return data;
 }
