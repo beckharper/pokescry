@@ -34,10 +34,23 @@ export async function fetchPokemonList(
   );
 
   if (!response.ok) {
-    throw new Error(`failed to fetch pokemon list: ${response.status}`);
+    throw new Error(`failed to fetch pokemon list`);
   }
 
   const data = await response.json();
   console.log("data", data);
+
   return data;
+}
+
+export async function fetchPokemon(name: string): Promise<Pokemon> {
+  const response = await fetch(
+    `${POKEAPI_BASE_URL}/pokemon/${name.toLowerCase()}`,
+  );
+  if (!response.ok) {
+    throw new Error("failed to fetch pokemon");
+  }
+
+  const data = await response.json();
+  return response.json();
 }
