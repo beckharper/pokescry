@@ -5,5 +5,5 @@ export const appRouter = router({
   pokemon: pokemonRouter,
 });
 
-export type appRouter = typeof appRouter;
+export type AppRouter = typeof appRouter;
 //only exporting type so we dont get serverside code in client
