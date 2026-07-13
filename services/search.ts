@@ -2,7 +2,7 @@ import Fuse from "fuse.js";
 import { redis } from "@/lib/redis";
 
 const POKEAPI_URL = "https://pokeapi.co/api/v2";
-const SEARCH_KEY = "pokemon:search:names";
+const INDEX_KEY = "pokemon:search:index";
 
 export interface PokemonSearch {
   id: number;
@@ -33,4 +33,28 @@ async function buildIndex(): Promise<PokemonSearch[]> {
     id: extractPkmnId(pokemon.url),
     name: pokemon.name,
   }));
+}
+
+export async function warmCache(): Promise<void> {
+  const index = await buildIndex();
+  await redis.set(INDEX_KEY, index, {
+    ex: 60 * 60 * 24,
+  });
+}
+
+async function getPkmnIndex(): Promise<PokemonSearch[]> {
+  let index = await redis.get<PokemonSearch[]>(INDEX_KEY);
+
+  if (!index) {
+    console.log("index miss");
+
+    await warmCache();
+
+    index = await redis.get<PokemonSearch[]>(INDEX_KEY);
+
+    if (!index) {
+      throw new Error("failed to load index");
+    }
+  }
+  return index;
 }
