@@ -7,48 +7,30 @@ const SEARCH_KEY = "pokemon:search:names";
 export interface PokemonSearch {
   id: number;
   name: string;
-  sprite: string | null;
+  // sprite: string | null;
 }
 
-export interface PkmnListResponse {
-  results: PokemonSearch[];
+export interface PkmnSpeciesResponse {
+  results: {
+    name: string;
+    url: string;
+  }[];
 }
-async function buildNameIndex(): Promise<PokemonSearch[]> {
-  const cached = await redis.get<PokemonSearch[]>(SEARCH_KEY);
 
-  if (cached) {
-    console.log("index hit");
-    return cached;
-  }
-  console.log("index miss");
-  const response = await fetch(`${POKEAPI_URL}/pokemon-species?limit=1100`);
+function extractPkmnId(url: string): number {
+  const parts = url.split("/").filter(Boolean);
+  return Number(parts[parts.length - 1]);
+}
 
+async function buildIndex(): Promise<PokemonSearch[]> {
+  const response = await fetch(`${POKEAPI_URL}/pokemon-species?limit=1500`);
   if (!response.ok) {
-    throw new Error("failed to learn pokemon name");
+    throw new Error("failed to fetch pokemon");
   }
 
-  const data = (await response.json()) as PkmnListResponse;
-
-  const pokemon = data.results;
-
-  await redis.set(SEARCH_KEY, pokemon, {
-    ex: 60 * 60 * 24,
-  });
-
-  return pokemon;
-}
-
-export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
-  const pokemon = await buildNameIndex();
-
-  const fuse = new Fuse(pokemon, {
-    keys: ["name"],
-    threshold: 0.25,
-    distance: 80,
-    minMatchCharLength: 3,
-  });
-  return fuse
-    .search(query.toLowerCase())
-    .slice(0, 10)
-    .map((result) => result.item);
+  const data = (await response.json()) as PkmnSpeciesResponse;
+  return data.results.map((pokemon) => ({
+    id: extractPkmnId(pokemon.url),
+    name: pokemon.name,
+  }));
 }
