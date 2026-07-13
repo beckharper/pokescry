@@ -26,9 +26,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <main className="flex flex-1 w-full max-w-3xl flex-col py-16 px-8 bg-white dark:bg-black">
         <SearchBar />
 
-        {query && (
-          <h2 className="text-xl mb-4">Search results for `{query}`</h2>
-        )}
+        {query && <h2 className="text-xl mb-4">Search results for {query}</h2>}
 
         {!query && <p className="text-zinc-500">Search for a pokemon</p>}
 
