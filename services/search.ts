@@ -5,9 +5,11 @@ const POKEAPI_URL = "https://pokeapi.co/api/v2";
 const SEARCH_KEY = "pokemon:search:names";
 
 export interface PokemonSearch {
+  id: number;
   name: string;
-  url: string;
+  sprite: string | null;
 }
+
 export interface PkmnListResponse {
   results: PokemonSearch[];
 }
@@ -25,7 +27,7 @@ async function buildNameIndex(): Promise<PokemonSearch[]> {
     throw new Error("failed to learn pokemon name");
   }
   const data = (await response.json()) as PkmnListResponse;
-  const pokemon = data.results;
+  const pokemon = data.results.filter((pokemon) => !pokemon.name.includes("-"));
   await redis.set(SEARCH_KEY, pokemon, {
     ex: 60 * 60 * 24,
   });
@@ -37,7 +39,9 @@ export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
 
   const fuse = new Fuse(pokemon, {
     keys: ["name"],
-    threshold: 0.35,
+    threshold: 0.2,
+    distance: 100,
+    minMatchCharLength: 3,
   });
   return fuse
     .search(query.toLowerCase())
