@@ -58,3 +58,25 @@ async function getPkmnIndex(): Promise<PokemonSearch[]> {
   }
   return index;
 }
+
+export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
+  const pokemon = await getPkmnIndex();
+
+  const normalizedName = query.trim().toLowerCase();
+
+  if (!normalizedName) {
+    return [];
+  }
+
+  const fuse = new Fuse(pokemon, {
+    keys: ["name"],
+    threshold: 0.2,
+    distance: 100,
+    minMatchCharLength: 3,
+  });
+
+  return fuse
+    .search(normalizedName)
+    .slice(0, 10)
+    .map((result) => result.item);
+}
