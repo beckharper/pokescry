@@ -40,7 +40,7 @@ export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
   const fuse = new Fuse(pokemon, {
     keys: ["name"],
     threshold: 0.2,
-    distance: 100,
+    distance: 80,
     minMatchCharLength: 3,
   });
   return fuse
