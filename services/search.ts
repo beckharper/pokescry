@@ -1,39 +1,46 @@
+import Fuse from "fuse.js";
+import { redis } from "@/lib/redis";
+
 const POKEAPI_URL = "https://pokeapi.co/api/v2";
+const SEARCH_KEY = "pokemon:search:names";
 
 export interface PokemonSearch {
-  id: number;
   name: string;
-  types: string[];
+  url: string;
+}
+export interface PkmnListResponse {
+  results: PokemonSearch[];
+}
+async function buildNameIndex(): Promise<PokemonSearch[]> {
+  const cached = await redis.get<PokemonSearch[]>(SEARCH_KEY);
+
+  if (cached) {
+    console.log("index hit");
+    return cached;
+  }
+  console.log("index miss");
+  const response = await fetch(`${POKEAPI_URL}/pokemon?limit=1500`);
+
+  if (!response.ok) {
+    throw new Error("failed to learn pokemon name");
+  }
+  const data = (await response.json()) as PkmnListResponse;
+  const pokemon = data.results;
+  await redis.set(SEARCH_KEY, pokemon, {
+    ex: 60 * 60 * 24,
+  });
+  return pokemon;
 }
 
-export async function buildPokemonIndex(): Promise<PokemonSearch[]> {
-  const listResponse = await fetch(`S{POKEAPI_URL}/pokemon?limit=10000`);
+export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
+  const pokemon = await buildNameIndex();
 
-  if (!listResponse.ok) {
-    throw new Error("failed to catch list of pokemon");
-  }
-
-  const allPokemon = await listResponse.json();
-
-  const pokemonDetails = await Promise.all(
-    allPokemon.results.map(async (pokemon: { name: string; url: string }) => {
-      const response = await fetch(pokemon.url);
-
-      if (!response.ok) {
-        throw new Error(`Failed to catch ${pokemon.name}`);
-      }
-
-      const data = await response.json();
-
-      return {
-        id: data.id,
-        name: data.name,
-        types: data.types.map(
-          (type: { type: { name: string } }) => type.type.name,
-        ),
-      };
-    }),
-  );
-
-  return pokemonDetails;
+  const fuse = new Fuse(pokemon, {
+    keys: ["name"],
+    threshold: 0.35,
+  });
+  return fuse
+    .search(query.toLowerCase())
+    .slice(0, 10)
+    .map((result) => result.item);
 }
