@@ -32,11 +32,9 @@ export default function SearchBar() {
         placeholder="Search for pokemon..."
         className="border rounded px-4 py-2"
       ></input>
-      <button
-        onClick={submitSearch}
-        className="border rounded px-4 py-2"
-      ></button>{" "}
-      Search
+      <button onClick={submitSearch} className="border rounded px-4 py-2">
+        Search
+      </button>
     </div>
   );
 }
