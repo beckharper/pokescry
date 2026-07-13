@@ -21,16 +21,20 @@ async function buildNameIndex(): Promise<PokemonSearch[]> {
     return cached;
   }
   console.log("index miss");
-  const response = await fetch(`${POKEAPI_URL}/pokemon?limit=1500`);
+  const response = await fetch(`${POKEAPI_URL}/pokemon-species?limit=1100`);
 
   if (!response.ok) {
     throw new Error("failed to learn pokemon name");
   }
+
   const data = (await response.json()) as PkmnListResponse;
-  const pokemon = data.results.filter((pokemon) => !pokemon.name.includes("-"));
+
+  const pokemon = data.results;
+
   await redis.set(SEARCH_KEY, pokemon, {
     ex: 60 * 60 * 24,
   });
+
   return pokemon;
 }
 
@@ -39,7 +43,7 @@ export async function searchPokemon(query: string): Promise<PokemonSearch[]> {
 
   const fuse = new Fuse(pokemon, {
     keys: ["name"],
-    threshold: 0.2,
+    threshold: 0.25,
     distance: 80,
     minMatchCharLength: 3,
   });
