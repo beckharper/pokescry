@@ -8,3 +8,7 @@ export const pokemonListSchema = z.object({
   offset: z.number().int().min(0).default(0),
   limit: z.number().int().positive().max(100).default(20),
 });
+
+export const pokemonSearchSchema = z.object({
+  query: z.string().min(1),
+});
