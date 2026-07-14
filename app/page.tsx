@@ -2,6 +2,7 @@ import Link from "next/link";
 import { caller } from "@/server/caller";
 import SearchBar from "@/components/SearchBar";
 import { warmCache } from "@/services/search";
+import ShapeGrid from "@/components/ShapeGrid";
 
 interface HomeProps {
   searchParams: Promise<{
@@ -22,32 +23,56 @@ export default async function Home({ searchParams }: HomeProps) {
     : [];
 
   return (
-    <div className="flex flex-col flex-1 items-center bg-[linear-gradient(180deg,_#ff0000_0%,_#0c0c46_50%,_#ffffff_100%)] font-sans">
-      <h1 className="text-4xl font-bold mt-25 mb-6 items center">PokeScry</h1>
-
-      <main className="flex flex-1 w-full max-w-3xl flex-col py-16 px-8">
-        <SearchBar />
-
-        {query && <h2 className="text-xl mb-4">Search results for {query}</h2>}
-
-        {!query && <p className="text-zinc-500"></p>}
-
-        <div className="grid grid-cols-4 gap-4">
-          {pokemon.map((p) => (
-            <Link
-              key={p.name}
-              href={`/pokemon/${p.name}`}
-              className="border rounded p-4 capitalize hover:bg-zinc-100 dark:hover:bg-zinc-900"
-            >
-              {p.name}
-            </Link>
-          ))}
+    <main className="relative min-h-screen overflow-hidden">
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="fixed inset-0 -z-10 overflow-hidden">
+          <div className="h-full w-full opacity-40">
+            <ShapeGrid />
+          </div>
         </div>
+      </div>
 
-        {query && pokemon.length === 0 && (
-          <p className="text-zinc-500">No Pokémon found.</p>
-        )}
-      </main>
-    </div>
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
+        <div className="w-full max-w-2xl flex flex-col items-center gap-8">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold tracking-tight">PokeScry</h1>
+          </div>
+
+          <SearchBar />
+          {query && (
+            <section className="w-full">
+              <h2 className="text-lg text-black mb-4">Results for {query}:</h2>
+
+              {pokemon.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {pokemon.map((p) => (
+                    <Link
+                      key={p.name}
+                      href={`/pokemon/${p.name}`}
+                      className="
+                      rounded-xl
+                      border
+                      p-6
+                      text-center
+                      capitalize
+                      transition
+                      hover:bg-zinc-100
+                      dark:hover:bg-zinc-900
+                    "
+                    >
+                      {p.name}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-zinc-500 text-center">No Pokémon found.</p>
+              )}
+            </section>
+          )}
+
+          {!query && <p className="text-zinc-400"></p>}
+        </div>
+      </section>
+    </main>
   );
 }

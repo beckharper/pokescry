@@ -20,21 +20,53 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="flex gap-2 mb-8">
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            submitSearch();
-          }
-        }}
-        placeholder="Search for pokemon..."
-        className="border rounded px-4 py-2"
-      ></input>
-      <button onClick={submitSearch} className="border rounded px-4 py-2">
-        Search
-      </button>
+    <div className="w-full">
+      <div
+        className="
+          flex
+          items-center
+          gap-3
+          rounded-2xl
+          border
+          bg-white
+          px-5
+          py-3
+          shadow-sm
+          dark:bg-black
+        "
+      >
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              submitSearch();
+            }
+          }}
+          placeholder="Search Pokémon..."
+          className="
+            flex-1
+            bg-transparent
+            outline-none
+            text-lg
+          "
+        />
+
+        <button
+          onClick={submitSearch}
+          className="
+            rounded-xl
+            px-4
+            py-2
+            bg-black
+            text-white
+            dark:bg-white
+            dark:text-black
+          "
+        >
+          Search
+        </button>
+      </div>
     </div>
   );
 }
