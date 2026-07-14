@@ -11,7 +11,13 @@ export interface Pokemon {
   sprites: {
     front_default: string | null;
   };
-  types: string[];
+  types: {
+    slot: number;
+    type: {
+      name: string;
+      url: string;
+    };
+  }[];
 }
 
 export interface PokemonListResponse {

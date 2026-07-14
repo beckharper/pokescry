@@ -1,9 +1,0 @@
-how is fuzzy search implemented
-
-explain choices with regard for BIG scaling in the future or reuse in another similar project
-
-TODO: cache entire list of names of pokemon from api immediately after initialization instead of on user search; have to fetch entire list anyways due to pokeapi not exposing a search functioon
-
-how does this scale
-
-cache invalidation: what happens if eg charmander page cached and nintendo changes charmander in some radical way

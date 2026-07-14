@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { caller } from "@/server/caller";
 import SearchBar from "@/components/SearchBar";
 import { warmCache } from "@/services/search";
 import ShapeGrid from "@/components/ShapeGrid";
+import PokeCard from "@/components/PokeCard";
 
 interface HomeProps {
   searchParams: Promise<{
@@ -46,22 +46,7 @@ export default async function Home({ searchParams }: HomeProps) {
               {pokemon.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {pokemon.map((p) => (
-                    <Link
-                      key={p.name}
-                      href={`/pokemon/${p.name}`}
-                      className="
-                      rounded-xl
-                      border
-                      p-6
-                      text-center
-                      capitalize
-                      transition
-                      hover:bg-zinc-100
-                      dark:hover:bg-zinc-900
-                    "
-                    >
-                      {p.name}
-                    </Link>
+                    <PokeCard key={p.name} id={p.id} name={p.name} />
                   ))}
                 </div>
               ) : (
