@@ -49,6 +49,8 @@ export default function SearchBar() {
             bg-transparent
             outline-none
             text-lg
+            font-sans
+            text-base
           "
         />
 

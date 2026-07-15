@@ -35,13 +35,17 @@ export default async function Home({ searchParams }: HomeProps) {
       <section className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
           <div className="text-center">
-            <h1 className="text-6xl font-bold tracking-tight">PokeScry</h1>
+            <h1 className="font-heading text-6xl font-bold tracking-tight">
+              PokeScry
+            </h1>
           </div>
 
           <SearchBar />
           {query && (
             <section className="w-full">
-              <h2 className="text-lg text-black mb-4">Results for {query}:</h2>
+              <h2 className="font-sans text-lg text-black mb-4">
+                Results for {query}:
+              </h2>
 
               {pokemon.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -50,7 +54,9 @@ export default async function Home({ searchParams }: HomeProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-black text-center">No Pokémon found.</p>
+                <p className="text-black text-center font-sans">
+                  No Pokémon found.
+                </p>
               )}
             </section>
           )}

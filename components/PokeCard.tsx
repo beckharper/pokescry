@@ -37,9 +37,11 @@ export default function PokemonCard({ id, name }: PokemonCardProps) {
         />
 
         <div className="text-center">
-          <h3 className="text-lg font-semibold capitalize">{name}</h3>
+          <h3 className="font-pixel text-lg font-semibold capitalize">
+            {name}
+          </h3>
 
-          <p className="text-sm text-zinc-500">
+          <p className="font-sans text-sm text-zinc-500">
             #{String(id).padStart(3, "0")}
           </p>
         </div>

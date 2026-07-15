@@ -27,7 +27,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
         "
       >
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-5xl capitalize font-bold mb-6 ">
+          <h1 className="font-pixel text-5xl capitalize font-bold mb-6 ">
             {pokemon.name}
           </h1>
 
@@ -41,7 +41,7 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
             />
           )}
 
-          <div className="space-y-2 texg-lg">
+          <div className="font-sans space-y-2 texg-lg">
             <p>Height: {pokemon.height}</p>
             <p> Weight: {pokemon.weight}</p>
             <div className="flex flex-col items-center gap-2">
