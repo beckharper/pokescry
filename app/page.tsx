@@ -26,7 +26,7 @@ export default async function Home({ searchParams }: HomeProps) {
     <main className="relative min-h-screen overflow-hidden">
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="fixed inset-0 -z-10 overflow-hidden">
-          <div className="h-full w-full opacity-40">
+          <div className="h-full w-full opacity-50 bg-linear-to-r from-blue-700 to-cyan-500">
             <ShapeGrid />
           </div>
         </div>
@@ -50,7 +50,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-zinc-500 text-center">No Pokémon found.</p>
+                <p className="text-black text-center">No Pokémon found.</p>
               )}
             </section>
           )}
